@@ -7,16 +7,18 @@ html, body {
 
 .grid-container {
     display: grid;
+    min-height: 100%;
     grid-template-areas:
       'header header header header header header'
       'date time teamhome teamout fluiten score'
       'footer footer footer footer footer footer';
     grid-gap: 20px;
-    grid-template-rows: 200px 1fr 40px;
+    width: 100vw;
+    
 }
 
 .grid-container > div {
-      padding: 32px;
+      padding: 16px 32px;
 }
 
 .header { 
@@ -46,10 +48,8 @@ html, body {
 .footer { 
     grid-area: footer; 
     text-align: center;
-    background-color: #f6f6f6;
-
+    margin-top: 40px;
 }
-
 
 ul {
     list-style-type: none;
@@ -85,8 +85,6 @@ h5 {
     font-family: 'Staatliches', 'cursive';
     color: #ccc;
     letter-spacing: 1px;
-    margin: 0;
-    padding: 16px;
 }
 
 @media (max-width: 500px) {
@@ -97,8 +95,8 @@ h5 {
         "footer footer footer";
         grid-gap: 5px;
         width: 100vw;
-        height: 100vh;
-        grid-template-rows: 100px 1fr 40px;
+        min-height: 100vh;
+        grid-auto-rows: min-content;
     }
     .score {
         display: none;
