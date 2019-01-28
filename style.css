@@ -11,43 +11,43 @@ html, body {
       'header header header header header header'
       'date time teamhome teamout fluiten score'
       'footer footer footer footer footer footer';
-    grid-gap: 10px;
-    width: 100vw;
-    height: 100vh;
-  }
+    grid-gap: 20px;
+    grid-template-rows: 200px 1fr 40px;
+}
 
-  .grid-container > div {
-      padding: 16px;
-  }
+.grid-container > div {
+      padding: 32px;
+}
 
-
-.item1 { 
+.header { 
     grid-area: header; 
     text-align: center;
     background-color: #2f2e7e;
 }
-.item2 { 
+
+.date { 
     grid-area: date; 
 }
-.item3 { 
+.time { 
     grid-area: time; 
 }
-.item4 { 
+.teamhome { 
     grid-area: teamhome; 
 }
-.item5{ 
+.teamout{ 
     grid-area: teamout; 
 }
-.item6 { 
+.fluiten{ 
     grid-area: fluiten; 
 }
-.item7 { 
+.score { 
     grid-area: score; 
 }
-.item8 { 
+.footer { 
     grid-area: footer; 
     text-align: center;
     background-color: #f6f6f6;
+
 }
 
 
@@ -86,4 +86,48 @@ h5 {
     color: #ccc;
     letter-spacing: 1px;
     margin: 0;
+    padding: 16px;
+}
+
+@media (max-width: 500px) {
+    .grid-container {
+        grid-template-areas:
+        "header header header"
+        "date time fluiten"
+        "footer footer footer";
+        grid-gap: 5px;
+        width: 100vw;
+        height: 100vh;
+        grid-template-rows: 100px 1fr 40px;
+    }
+    .score {
+        display: none;
+    }
+    .teamhome {
+        display: none;
+    }
+    .teamout {
+        display: none;
+    }
+
+    h1 {
+        font-size: 24px;
+        font-family: 'Staatliches';
+        padding: 16px;
+        margin: 0;
+        color: #fff;
+        letter-spacing: 2px;
+    }
+
+    h2 {
+        font-size: 24px;
+        letter-spacing: 1px;
+        font-family: 'Staatliches';
+        margin: 0;
+        color: #2f2e7e;
+    }
+
+    .image {
+        display: none;
+    }
 }
