@@ -131,3 +131,6 @@ h6 {
     color: #ccc;
     margin: 0;
 }
+
+html {font-size: x-large;}
+@media (min-width:80em) {html {font-size: large;}}
