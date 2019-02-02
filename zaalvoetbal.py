@@ -102,9 +102,9 @@ for i in range(len(match_lines)):
                 ref_dates[i].strftime(r'%H:%M')))
         print(r'  </div>')
         print(r'  <div class="match">')
-        print(r'    <h2>{}</h2>'.format(home_teams[i].strip()))
+        print(r'    <h2 align="center">{}</h2>'.format(home_teams[i].strip()))
         print(r'    <img src="images/versus.png" class="versus" alt="USC logo" height="32" width="32">')
-        print(r'    <h2>{}</h2>'.format(away_teams[i].strip()))
+        print(r'    <h2 align="center">{}</h2>'.format(away_teams[i].strip()))
         print(r'  </div>')
         print(r'</div>')
 
