@@ -10,27 +10,27 @@ import os
 import re
 
 if sys.version_info[0] < 3:
-    sys.stderr.write("Please use Python 3\n")
+    sys.stderr.write(r'Please use Python 3\n')
     sys.exit(1)
 
 p = argparse.ArgumentParser()
-p.add_argument("-team", type=str, default="Seedorf",
-               help="Team name")
-p.add_argument("-update", action='store_true', help="Download new pdf file")
-p.add_argument("-url", type=str, default=
+p.add_argument('-team', type=str, default='Seedorf',
+               help='Team name')
+p.add_argument('-update', action='store_true', help='Download new pdf file')
+p.add_argument('-url', type=str, default=
                r'https://usc.uva.nl/wp-content/uploads/Speelschema-zv-18-19-II-heren-1.pdf',
-               help="URL of pdf file")
-p.add_argument("-db", type=str, default="zaalvoetbal.db",
-               help="File name of database")
+               help='URL of pdf file')
+p.add_argument('-db', type=str, default='zaalvoetbal.db',
+               help='File name of database')
 
 args = p.parse_args()
 
 if args.update:
-    with tempfile.NamedTemporaryFile(suffix=".pdf") as fp:
-        call(["wget", "--quiet", args.url, "-O", fp.name])
-        output = check_output(["pdftotext", "-layout", fp.name, '-'])
+    with tempfile.NamedTemporaryFile(suffix='.pdf') as fp:
+        call(['wget', '--quiet', args.url, '-O', fp.name])
+        output = check_output(['pdftotext', '-layout', fp.name, '-'])
         # Decode byte string
-        output = output.decode("utf-8")
+        output = output.decode(r'utf-8')
     with open(args.db, 'w') as db:
         db.write(output)
 else:
@@ -86,53 +86,29 @@ for ix in match_lines:
     home_teams.append(m.group(1).strip())
     away_teams.append(m.group(2).strip())
 
+with open(r'header.html') as f:
+    print(f.read())
 
-print("""<!doctype html>
-
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Zaalvoetbal schema</title>
-
-  <style>
-    table {
-      border-collapse: collapse;
-      width: 100%;
-    }
-
-    td, th {
-      border: 1px solid #dddddd;
-      text-align: left;
-      padding: 8px;
-    }
-
-    tr:nth-child(even) {
-      background-color: #dddddd;
-    }
-  </style>
-</head>
-
-<body>
-<table>
-<tr>
-<th>datum</th>
-<th>tijd</th>
-<th>thuis</th>
-<th>uit</th>
-<th>fluiten</th>
-</tr>""")
+print(r'<div class="grid-container">')
 
 for i in range(len(match_lines)):
     if play_dates[i] > now:
-        print("<tr>")
-        print(u'<th>{}</th>'.format(play_dates[i].strftime("%d/%m")))
-        print(u'<th>{}</th>'.format(play_dates[i].strftime("%H:%M")))
-        print(u'<th>{}</th>'.format(home_teams[i].strip()))
-        print(u'<th>{}</th>'.format(away_teams[i].strip()))
-        print(u'<th>{}</th>'.format(ref_dates[i].time()))
-        print("</tr>")
+        print(r'<div class="grid-item">')
+        print(r'  <div class="time">')
+        print(r'    <h5>{}</h5>'.format(
+            play_dates[i].strftime(r'%d %B - %H:%M')))
+        if team_pat.search(home_teams[i]):
+            print(r'    <h3>&nbsp + fluiten {}</h3>'.format(
+                ref_dates[i].strftime(r'%H:%M')))
+        print(r'  </div>')
+        print(r'  <div class="match">')
+        print(r'    <h2>{}</h2>'.format(home_teams[i].strip()))
+        print(r'    <img src="images/versus.png" class="versus" alt="USC logo" height="32" width="32">')
+        print(r'    <h2>{}</h2>'.format(away_teams[i].strip()))
+        print(r'  </div>')
+        print(r'</div>')
 
-print("""</table>
-</body>
-</html>
-""")
+print(r'</div>')
+
+with open(r'footer.html') as f:
+    print(f.read())
