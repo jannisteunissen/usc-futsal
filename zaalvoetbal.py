@@ -104,18 +104,30 @@ print(r'''<!DOCTYPE html>
         <h1>USC zaalvoetbal schema</h1>
       </div>
     </div>
+''')
 
-    <div class="grid-container">''')
-
+prev_month = -1
 for i in range(len(match_lines)):
     if play_dates[i] > now:
+        month = play_dates[i].month
+
+        if month != prev_month:
+            if prev_month != -1:
+                print(r'</div>')
+            print(r'<div class="grid-container">')
+            print(r'  <div class="month">')
+            print(r'    <h2 align="center">{}</h2>'.format(
+                play_dates[i].strftime(r'%B')))
+            print(r'  </div>')
+            prev_month = month
+
         print(r'')
         print(r'<div class="grid-item">')
         print(r'  <div class="time">')
-        print(r'    <h5>{}</h5>'.format(
+        print(r'    <h3>{}</h3>'.format(
             play_dates[i].strftime(r'%d %B - %H:%M')))
         if team_pat.search(home_teams[i]):
-            print(r'    <h3>&nbsp + fluiten {}</h3>'.format(
+            print(r'    <h5>&nbsp + fluiten {}</h5>'.format(
                 ref_dates[i].strftime(r'%H:%M')))
         print(r'  </div>')
         print(r'  <div class="match">')
@@ -126,7 +138,7 @@ for i in range(len(match_lines)):
         print(r'</div>')
         print(r'')
 
-print(r'''    </div>
+print(r'''</div>
   </body>
 </html>
 ''')
