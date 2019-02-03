@@ -86,13 +86,30 @@ for ix in match_lines:
     home_teams.append(m.group(1).strip())
     away_teams.append(m.group(2).strip())
 
-with open(r'header.html') as f:
-    print(f.read())
+print(r'''<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>USC zaalvoetbal schema</title>
 
-print(r'<div class="grid-container">')
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+  <body>
+
+    <div class="header">
+      <div class="image">
+        <img src="images/logo-usc.png" alt="USC logo" height="60" width="42">
+      </div>
+      <div class="title">
+        <h1>USC zaalvoetbal schema</h1>
+      </div>
+    </div>
+
+    <div class="grid-container">''')
 
 for i in range(len(match_lines)):
     if play_dates[i] > now:
+        print(r'')
         print(r'<div class="grid-item">')
         print(r'  <div class="time">')
         print(r'    <h5>{}</h5>'.format(
@@ -107,8 +124,9 @@ for i in range(len(match_lines)):
         print(r'    <h2 align="center">{}</h2>'.format(away_teams[i].strip()))
         print(r'  </div>')
         print(r'</div>')
+        print(r'')
 
-print(r'</div>')
-
-with open(r'footer.html') as f:
-    print(f.read())
+print(r'''    </div>
+  </body>
+</html>
+''')
