@@ -13,7 +13,7 @@
 }
 
 html, body {
-    font-size: x-large;
+    font-size: large;
     width: 100%;
     height: 100%;
     padding: 0;
@@ -137,4 +137,9 @@ h6 {
     margin: 0;
 }
 
-/* @media (min-width:80em) {html {font-size: large;}} */
+/* @media screen and (min-aspect-ratio: 13/9) { /\* landscape styles here *\/} */
+@media screen and (max-aspect-ratio: 13/9) { /* portrait styles here */
+    html, body {font-size: xx-large;}
+    .header {height: 250px;}
+    .grid-item {max-width: 100%;}
+}
