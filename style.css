@@ -41,6 +41,10 @@ html, body {
     padding-bottom: 1rem;
 }
 
+#left{float:left;width:45%;}
+#right{float:right;width:45%;}
+#center{margin:0 auto;width:10%;}
+
 .grid-container {
 }
 
@@ -72,6 +76,7 @@ html, body {
     display: flex;
     flex-direction: row;
     align-items: center;
+    width: 100%;
 }
 
 .score {
