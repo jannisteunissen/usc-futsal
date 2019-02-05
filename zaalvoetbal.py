@@ -135,7 +135,7 @@ for i in range(len(match_lines)):
         print(r'      <h2 align="right">{}</h2>'.format(home_teams[i].strip()))
         print(r'    </div>')
         print(r'    <div id="center">')
-        print(r'      <img src="images/versus.png" class="versus" alt="USC logo" height="32" width="32">')
+        print(r'      <img src="images/versus.png" class="versus" align="center" alt="USC logo" height="32" width="32">')
         print(r'    </div>')
         print(r'    <div id="right">')
         print(r'      <h2 align="left">{}</h2>'.format(away_teams[i].strip()))

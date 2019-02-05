@@ -87,7 +87,8 @@ html, body {
 }
 
 .versus {
-    margin: 0px 8px 0px 8px;
+    display: block;
+    margin: 0 auto;
 }
 
 .month {
