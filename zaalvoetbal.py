@@ -8,6 +8,7 @@ import tempfile
 import argparse
 import os
 import re
+import urllib.request
 
 if sys.version_info[0] < 3:
     sys.stderr.write(r'Please use Python 3\n')
@@ -17,20 +18,26 @@ p = argparse.ArgumentParser()
 p.add_argument('-team', type=str, default='Seedorf',
                help='Team name')
 p.add_argument('-update', action='store_true', help='Download new pdf file')
-p.add_argument('-url', type=str, default=
-               r'https://usc.uva.nl/wp-content/uploads/Speelschema-zv-18-19-II-heren-1.pdf',
-               help='URL of pdf file')
+p.add_argument('-url', type=str,
+               default=r'https://usc.uva.nl/sport/zaalvoetbalcompetitie/',
+               help='URL of USC futsal page')
 p.add_argument('-db', type=str, default='zaalvoetbal.db',
                help='File name of database')
 
 args = p.parse_args()
 
 if args.update:
-    with tempfile.NamedTemporaryFile(suffix='.pdf') as fp:
-        call(['wget', '--quiet', args.url, '-O', fp.name])
-        output = check_output(['pdftotext', '-layout', fp.name, '-'])
-        # Decode byte string
-        output = output.decode(r'utf-8')
+    page = urllib.request.urlopen(args.url).read().decode('utf-8')
+    pdf_pat = re.compile(r'http.*speelschema.*\.pdf', re.I)
+    pdf_files = pdf_pat.findall(page)
+
+    output = ""
+    for pdf in pdf_files:
+        with tempfile.NamedTemporaryFile(suffix='.pdf') as fp:
+            call(['wget', '--quiet', pdf, '-O', fp.name])
+            tmp = check_output(['pdftotext', '-layout', fp.name, '-'])
+            # Decode byte string
+            output += tmp.decode(r'utf-8')
     with open(args.db, 'w') as db:
         db.write(output)
 else:
