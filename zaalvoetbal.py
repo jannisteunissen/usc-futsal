@@ -28,8 +28,11 @@ args = p.parse_args()
 
 if args.update:
     page = urllib.request.urlopen(args.url).read().decode('utf-8')
-    pdf_pat = re.compile(r'http.*speelschema.*\.pdf', re.I)
-    pdf_files = pdf_pat.findall(page)
+    pdf_pat = [re.compile(r'http.*speelschema.*\.pdf', re.I),
+               re.compile(r'http.*bekerschema.*\.pdf', re.I)]
+    pdf_files = []
+    for p in pdf_pat:
+        pdf_files += p.findall(page)
 
     output = ""
     for pdf in pdf_files:
@@ -56,7 +59,7 @@ date_pat = re.compile(r'(\d\d/\d\d)')
 time_pat = re.compile(r'(\d\d:\d\d)')
 
 # To match the team names in a line
-teams_pat = re.compile(r'\d\d[A-Z]\d\d\s*' # e.g. 02B29
+teams_pat = re.compile(r'[0-9A-Z]{5}\s*'   # e.g. 02B29
                        r'([^-]+)'          # first team
                        r'-\s*'             # separator
                        r'(.*)\d\d:\d\d')   # second team followed by time
@@ -115,7 +118,7 @@ print(r'''<!DOCTYPE html>
 
 prev_month = -1
 for i in range(len(match_lines)):
-    if play_dates[i] > now:
+    if play_dates[i] > now and (play_dates[i] - now).days < 180:
         month = play_dates[i].month
 
         if month != prev_month:
