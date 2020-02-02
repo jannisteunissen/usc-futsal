@@ -87,14 +87,20 @@ for ix in match_lines:
 
     # Find play/referee times
     times = time_pat.findall(lines[ix])
-    play_date = datetime.strptime(' '.join([year, date, times[0]]), '%Y %d/%m %H:%M')
-    ref_date = datetime.strptime(' '.join([year, date, times[1]]), '%Y %d/%m %H:%M')
-    play_dates.append(play_date)
-    ref_dates.append(ref_date)
 
-    m = teams_pat.search(lines[ix])
-    home_teams.append(m.group(1).strip())
-    away_teams.append(m.group(2).strip())
+    play_date = datetime.strptime(' '.join(
+        [year, date, times[0]]), '%Y %d/%m %H:%M')
+    if play_date > now and (play_date - now).days < 180:
+        if len(times) > 1:
+            ref_date = datetime.strptime(' '.join(
+                [year, date, times[1]]), '%Y %d/%m %H:%M')
+        else:
+            ref_date = play_date
+        play_dates.append(play_date)
+        ref_dates.append(ref_date)
+        m = teams_pat.search(lines[ix])
+        home_teams.append(m.group(1).strip())
+        away_teams.append(m.group(2).strip())
 
 print(r'''<!DOCTYPE html>
 <html lang="en">
@@ -117,42 +123,41 @@ print(r'''<!DOCTYPE html>
 ''')
 
 prev_month = -1
-for i in range(len(match_lines)):
-    if play_dates[i] > now and (play_dates[i] - now).days < 180:
-        month = play_dates[i].month
+for i in range(len(play_dates)):
+    month = play_dates[i].month
 
-        if month != prev_month:
-            if prev_month != -1:
-                print(r'</div>')
-            print(r'<div class="grid-container">')
-            print(r'  <div class="month">')
-            print(r'    <h2 align="center">{}</h2>'.format(
-                play_dates[i].strftime(r'%B')))
-            print(r'  </div>')
-            prev_month = month
+    if month != prev_month:
+        if prev_month != -1:
+            print(r'</div>')
+        print(r'<div class="grid-container">')
+        print(r'  <div class="month">')
+        print(r'    <h2 align="center">{}</h2>'.format(
+            play_dates[i].strftime(r'%B')))
+        print(r'  </div>')
+        prev_month = month
 
-        print(r'')
-        print(r'<div class="grid-item">')
-        print(r'  <div class="time">')
-        print(r'    <h3>{}</h3>'.format(
-            play_dates[i].strftime(r'%d %B - %H:%M')))
-        if team_pat.search(home_teams[i]):
-            print(r'    <h5>&nbsp + fluiten {}</h5>'.format(
-                ref_dates[i].strftime(r'%H:%M')))
-        print(r'  </div>')
-        print(r'  <div class="match">')
-        print(r'    <div id="left">')
-        print(r'      <h2 align="right">{}</h2>'.format(home_teams[i].strip()))
-        print(r'    </div>')
-        print(r'    <div id="center">')
-        print(r'      <img src="images/versus.png" class="versus" align="center" alt="USC logo" height="32" width="32">')
-        print(r'    </div>')
-        print(r'    <div id="right">')
-        print(r'      <h2 align="left">{}</h2>'.format(away_teams[i].strip()))
-        print(r'    </div>')
-        print(r'  </div>')
-        print(r'</div>')
-        print(r'')
+    print(r'')
+    print(r'<div class="grid-item">')
+    print(r'  <div class="time">')
+    print(r'    <h3>{}</h3>'.format(
+        play_dates[i].strftime(r'%d %B - %H:%M')))
+    if team_pat.search(home_teams[i]):
+        print(r'    <h5>&nbsp + fluiten {}</h5>'.format(
+            ref_dates[i].strftime(r'%H:%M')))
+    print(r'  </div>')
+    print(r'  <div class="match">')
+    print(r'    <div id="left">')
+    print(r'      <h2 align="right">{}</h2>'.format(home_teams[i].strip()))
+    print(r'    </div>')
+    print(r'    <div id="center">')
+    print(r'      <img src="images/versus.png" class="versus" align="center" alt="USC logo" height="32" width="32">')
+    print(r'    </div>')
+    print(r'    <div id="right">')
+    print(r'      <h2 align="left">{}</h2>'.format(away_teams[i].strip()))
+    print(r'    </div>')
+    print(r'  </div>')
+    print(r'</div>')
+    print(r'')
 
 print(r'''</div>
   </body>
