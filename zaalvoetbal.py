@@ -21,26 +21,32 @@ p.add_argument('-update', action='store_true', help='Download new pdf file')
 p.add_argument('-url', type=str,
                default=r'https://usc.uva.nl/sport/zaalvoetbalcompetitie/',
                help='URL of USC futsal page')
+p.add_argument('-pdf', type=str, help='PDF input')
 p.add_argument('-db', type=str, default='zaalvoetbal.db',
                help='File name of database')
 
 args = p.parse_args()
 
 if args.update:
-    page = urllib.request.urlopen(args.url).read().decode('utf-8')
-    pdf_pat = [re.compile(r'http.*speelschema.*\.pdf', re.I),
-               re.compile(r'http.*bekerschema.*\.pdf', re.I)]
-    pdf_files = []
-    for p in pdf_pat:
-        pdf_files += p.findall(page)
-
     output = ""
-    for pdf in pdf_files:
-        with tempfile.NamedTemporaryFile(suffix='.pdf') as fp:
-            call(['wget', '--quiet', pdf, '-O', fp.name])
-            tmp = check_output(['pdftotext', '-layout', fp.name, '-'])
-            # Decode byte string
-            output += tmp.decode(r'utf-8')
+
+    if args.pdf:
+        tmp = check_output(['pdftotext', '-layout', args.pdf, '-'])
+        output += tmp.decode(r'utf-8')
+    else:
+        page = urllib.request.urlopen(args.url).read().decode('utf-8')
+        pdf_pat = [re.compile(r'http.*speelschema.*\.pdf', re.I),
+                   re.compile(r'http.*bekerschema.*\.pdf', re.I)]
+        pdf_files = []
+        for p in pdf_pat:
+            pdf_files += p.findall(page)
+
+        for pdf in pdf_files:
+            with tempfile.NamedTemporaryFile(suffix='.pdf') as fp:
+                call(['wget', '--quiet', pdf, '-O', fp.name])
+                tmp = check_output(['pdftotext', '-layout', fp.name, '-'])
+                # Decode byte string
+                output += tmp.decode(r'utf-8')
     with open(args.db, 'w') as db:
         db.write(output)
 else:
@@ -59,8 +65,7 @@ date_pat = re.compile(r'(\d\d/\d\d)')
 time_pat = re.compile(r'(\d\d:\d\d)')
 
 # To match the team names in a line
-teams_pat = re.compile(r'[0-9A-Z]{5}\s*'   # e.g. 02B29
-                       r'([^-]+)'          # first team
+teams_pat = re.compile(r'([^-]+)'          # first team
                        r'-\s*'             # separator
                        r'(.*)\d\d:\d\d')   # second team followed by time
 
@@ -78,6 +83,8 @@ for i in range(len(lines)):
     if team_pat.search(lines[i]):
         match_lines.append(i)
 
+in_the_future = False
+
 for ix in match_lines:
     # Find date pattern by searching backwards through the lines
     for i in range(ix, -1, -1):
@@ -90,7 +97,8 @@ for ix in match_lines:
 
     play_date = datetime.strptime(' '.join(
         [year, date, times[0]]), '%Y %d/%m %H:%M')
-    if play_date > now and (play_date - now).days < 180:
+    if play_date > now or in_the_future:
+        in_the_future = True
         if len(times) > 1:
             ref_date = datetime.strptime(' '.join(
                 [year, date, times[1]]), '%Y %d/%m %H:%M')
